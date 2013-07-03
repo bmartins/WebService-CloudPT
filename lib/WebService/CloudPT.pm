@@ -114,6 +114,13 @@ sub auth {
     $self->access_secret($response->token_secret);
 }
 
+sub list_links {
+	my ($self) = @_;
+	$self->api_json({
+		url => 'https://publicapi.cloudpt.pt/1/ListLinks',
+	});
+}
+
 sub account_info {
     my $self = shift;
 
@@ -766,6 +773,12 @@ L<https://cloudpt.pt/documentation#copyref>
     $fh_get->seek(0, 0);
 
 L<https://cloudpt.pt/documentation#thumbnails>
+
+=head2 list_links
+
+	my $data = $cloudpt->list_links();
+	
+L<https://cloudpt.pt/documentation#listlinks>
 
 =head2 env_proxy
 

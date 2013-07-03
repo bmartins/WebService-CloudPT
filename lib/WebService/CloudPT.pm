@@ -114,6 +114,13 @@ sub auth {
     $self->access_secret($response->token_secret);
 }
 
+sub list_shared_folders {
+	my ($self) = @_;
+	$self->api_json({
+		url => 'https://publicapi.cloudpt.pt/1/ListSharedFolders',
+	});
+}
+
 sub list_links {
 	my ($self) = @_;
 	$self->api_json({
@@ -779,6 +786,13 @@ L<https://cloudpt.pt/documentation#thumbnails>
 	my $data = $cloudpt->list_links();
 	
 L<https://cloudpt.pt/documentation#listlinks>
+
+=head2 list_shared_folders
+
+	my $data = $cloudpt->list_shared_folders();
+	
+L<https://cloudpt.pt/documentation#listsharedfolders>
+
 
 =head2 env_proxy
 

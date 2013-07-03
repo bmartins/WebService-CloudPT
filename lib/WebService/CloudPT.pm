@@ -114,6 +114,15 @@ sub auth {
     $self->access_secret($response->token_secret);
 }
 
+sub share_folder {
+	my ($self, $path, $to) = @_;
+	$self->api_json({
+		method => 'POST',
+		url    => 'https://publicapi.cloudpt.pt/1/ShareFolder/' . $self->root . $path,
+		content => 'to_email=' . $to
+	});
+}
+	
 sub list_shared_folders {
 	my ($self) = @_;
 	$self->api_json({
@@ -410,7 +419,7 @@ sub api_lwp {
     if ($args->{content}) {
         my $buf;
         my $content = delete $args->{content};
-		if (($content !~/^path=/) and ($content !~/^rev=/) and ($content !~/^from_/)){
+		if (($content !~/^path=/) and ($content !~/^rev=/) and ($content !~/^from_/) and ($content !~/^to_email/)){
 	        $args->{content} = sub {
     	        read($content, $buf, 1024);
         	    return $buf;
@@ -424,8 +433,7 @@ sub api_lwp {
                 "Failed to $_[1] for Content-Length: $!",
             );
         };
-		print "CONTENT: $content\n";
-		if (($content !~/^path\=/) and ($content !~/^rev=/) and ($content !~/^from_/)){
+		if (($content !~/^path\=/) and ($content !~/^rev=/) and ($content !~/^from_/) and ($content !~/^to_email/)){
 			print "SEEK\n";
 	        $assert->(defined(my $cur_pos = tell($content)), 'tell');
    	    	$assert->(seek($content, 0, SEEK_END),           'seek');
@@ -786,6 +794,14 @@ L<https://cloudpt.pt/documentation#thumbnails>
 	my $data = $cloudpt->list_links();
 	
 L<https://cloudpt.pt/documentation#listlinks>
+
+=head2 share_folder
+	
+	my $data = $cloudpt->share_folder('/some_folder', 'my_friend@somewhere.at');
+	print $data->{'req_id'}
+
+L<https://cloudpt.pt/documentation#sharefolder>
+
 
 =head2 list_shared_folders
 

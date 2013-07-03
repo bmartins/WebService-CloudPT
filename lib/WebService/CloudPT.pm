@@ -361,10 +361,7 @@ sub api {
     my ($self, $args) = @_;
 
     $args->{method} ||= 'GET';
-	print "############### SUB API URL:" . $args->{'url'} ."\n";
-#	$args->{'url'} .= '?overwrite=true';
     $args->{url} = $self->oauth_request_url($args);
-	print "############### SUB API URL:" . $args->{'url'} ."\n";
 
     $self->request_url($args->{url});
     $self->request_method($args->{method});
@@ -389,7 +386,6 @@ sub api {
 sub api_lwp {
     my ($self, $args) = @_;
 
-	print "api_lwp\n";
     my $headers = [];
     if ($args->{write_file}) {
         $args->{write_code} = sub {
@@ -433,9 +429,6 @@ sub api_lwp {
     if ($args->{headers}) {
         push @$headers, @{ $args->{headers} };
     }
-	print STDERR "API_LWP: " . $args->{'url'} ."\n";
-#	$args->{'url'} =~s/\?oauth_consumer_key/\?overwrite=True\&oauth_consumer_key/;
-	print STDERR "API_LWP: " . $args->{'url'} ."\n";
     my $req = HTTP::Request->new($args->{method}, $args->{url}, $headers, $args->{content});
     my $ua = LWP::UserAgent->new;
     $ua->timeout($self->timeout);
@@ -445,10 +438,10 @@ sub api_lwp {
     if ($res->is_success) {
         $self->error(undef);
     } else {
-		print "NOT SUCCESS\n";
-		print $res->status_line ."\n";
-		print $res->decoded_content ."\n";
-		print $res->request->as_string;
+#		print "NOT SUCCESS\n";
+#		print $res->status_line ."\n";
+#		print $res->decoded_content ."\n";
+#		print $res->request->as_string;
         $self->error($res->decoded_content);
     }
     return $res->decoded_content;
@@ -469,9 +462,6 @@ sub api_json {
 
 sub oauth_request_url {
     my ($self, $args) = @_;
-	### DEBUG 
-	print "oatuh_request_url: " . $args->{'url'} ."\n";
-	####
 
     Carp::croak("missing url.") unless $args->{url};
     Carp::croak("missing method.") unless $args->{method};
@@ -493,12 +483,6 @@ sub oauth_request_url {
         $token_secret = $self->access_secret;
     }
 
-	### DEBUG 
-	## ADDED oauth_callback
-	print STDERR "type: " . $type ."\n";
-#	$args->{'url'} .= '?overwrite=true';
-	print "********* URL: " . $args->{'url'} ."\n";
-
     my $request = Net::OAuth->request($type)->new(
         extra_params => $args->{extra_params},
         consumer_key => $self->key,
@@ -513,15 +497,7 @@ sub oauth_request_url {
 		callback => $args->{'callback'},
 		verifier => $args->{'verifier'},
     );
-	### DEBUG 
-#	$request->oauth_callback('https://simpletodo.net/cloudpt_callback');
-#	use Data::Dumper
-#	print STDERR Dumper $request;
-    my $url = $request->to_url;
-	print STDERR $url ."\n";
     $request->sign;
-    my $url2 = $request->to_url;
-	print STDERR $url2 ."\n";
     $request->to_url;
 }
 

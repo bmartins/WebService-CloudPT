@@ -147,6 +147,14 @@ sub _delete_link {
 	});
 }
 
+sub list {
+	my ($self, $path, $params) = @_;
+	$self->api_json({
+		url => 'https://publicapi.cloudpt.pt/1/List/' . $self->root . $path,
+		extra_params => $params
+	});
+}
+
 sub account_info {
     my $self = shift;
 
@@ -811,6 +819,12 @@ L<https://cloudpt.pt/documentation#copyref>
     $fh_get->seek(0, 0);
 
 L<https://cloudpt.pt/documentation#thumbnails>
+
+=head2 list($path, {'param1' => 'value1', 'param2' => 'value2'....})
+
+	my $data = $cloudpt->list('/test', {'file_limit' => 10});
+
+L<https://cloudpt.pt/documentation#list>
 
 =head2 list_links
 

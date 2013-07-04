@@ -137,6 +137,16 @@ sub list_links {
 	});
 }
 
+sub _delete_link {
+	my ($self, $share_id) = @_;
+	
+	$self->api_json({
+		method => 'POST',
+		url => 'https://publicapi.cloudpt.pt/1/DeleteLink',
+		content => 'shareid=' . $share_id
+	});
+}
+
 sub account_info {
     my $self = shift;
 
@@ -202,6 +212,15 @@ sub files_put {
         content => $content,
         %$opts
     });
+}
+
+sub _metadata_share {
+	### NOT WORKING YET
+	my ($self, $share_id, $path) = @_;
+
+	$self->api_json({
+		url => $self->url('https://publicapi.cloudpt.pt/1/MetadataShare/'. $share_id . $path),
+	});
 }
 
 sub metadata {
@@ -419,7 +438,7 @@ sub api_lwp {
     if ($args->{content}) {
         my $buf;
         my $content = delete $args->{content};
-		if (($content !~/^path=/) and ($content !~/^rev=/) and ($content !~/^from_/) and ($content !~/^to_email/)){
+		if (($content !~/^path=/) and ($content !~/^rev=/) and ($content !~/^from_/) and ($content !~/^to_email/) and ($content !~/^shareid=/)){
 	        $args->{content} = sub {
     	        read($content, $buf, 1024);
         	    return $buf;
@@ -433,7 +452,7 @@ sub api_lwp {
                 "Failed to $_[1] for Content-Length: $!",
             );
         };
-		if (($content !~/^path\=/) and ($content !~/^rev=/) and ($content !~/^from_/) and ($content !~/^to_email/)){
+		if (($content !~/^path\=/) and ($content !~/^rev=/) and ($content !~/^from_/) and ($content !~/^to_email/) and ($content !~/^shareid=/)){
 			print "SEEK\n";
 	        $assert->(defined(my $cur_pos = tell($content)), 'tell');
    	    	$assert->(seek($content, 0, SEEK_END),           'seek');
@@ -443,6 +462,8 @@ sub api_lwp {
 	        push @$headers, 'Content-Length' => $content_length;
 		} else {
 			push @$headers, 'Content-Legnth' => length($content);
+			## DEBUG
+			print STDERR "CONTENT:" . $content ."\n";
 		}
     } else {
 		push @$headers, 'Content-Length' => 0;
@@ -451,6 +472,8 @@ sub api_lwp {
     if ($args->{headers}) {
         push @$headers, @{ $args->{headers} };
     }
+	### DEBUG 
+	print STDERR  "URL " . $args->{'url'} ."\n";
     my $req = HTTP::Request->new($args->{method}, $args->{url}, $headers, $args->{content});
     my $ua = LWP::UserAgent->new;
     $ua->timeout($self->timeout);

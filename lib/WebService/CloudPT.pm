@@ -77,7 +77,7 @@ sub login {
         method => 'POST',
         url  => $request_token_url, 
 		'callback' => $callback_url,
-		'extra_params' => { 'oauth_callback'  => $callback_url },
+#		'extra_params' => { 'oauth_callback'  => $callback_url },
     }) or return;
 	### DEBUG 
 
@@ -93,7 +93,7 @@ sub login {
     my $url = URI->new($authorize_url);
     $url->query_form(
         oauth_token => $response->token,
-        oauth_callback => $callback_url
+        #oauth_callback => $callback_url
     );
     $url->as_string;
 }

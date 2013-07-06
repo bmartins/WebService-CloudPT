@@ -77,18 +77,11 @@ sub login {
         method => 'POST',
         url  => $request_token_url, 
 		'callback' => $callback_url,
-#		'extra_params' => { 'oauth_callback'  => $callback_url },
     }) or return;
-	### DEBUG 
-
-	print "body: " . $body ."\n";
-	### DEBUG
 
     my $response = Net::OAuth->response('request token')->from_post_body($body);
     $self->request_token($response->token);
     $self->request_secret($response->token_secret);
-	### DEBUG 
-	print "\n\nGot through here ling 95\n";
 
     my $url = URI->new($authorize_url);
     $url->query_form(
@@ -470,8 +463,6 @@ sub api_lwp {
 	        push @$headers, 'Content-Length' => $content_length;
 		} else {
 			push @$headers, 'Content-Legnth' => length($content);
-			## DEBUG
-			print STDERR "CONTENT:" . $content ."\n";
 		}
     } else {
 		push @$headers, 'Content-Length' => 0;
@@ -480,8 +471,6 @@ sub api_lwp {
     if ($args->{headers}) {
         push @$headers, @{ $args->{headers} };
     }
-	### DEBUG 
-	print STDERR  "URL " . $args->{'url'} ."\n";
     my $req = HTTP::Request->new($args->{method}, $args->{url}, $headers, $args->{content});
     my $ua = LWP::UserAgent->new;
     $ua->timeout($self->timeout);
@@ -491,10 +480,6 @@ sub api_lwp {
     if ($res->is_success) {
         $self->error(undef);
     } else {
-#		print "NOT SUCCESS\n";
-#		print $res->status_line ."\n";
-#		print $res->decoded_content ."\n";
-#		print $res->request->as_string;
         $self->error($res->decoded_content);
     }
     return $res->decoded_content;

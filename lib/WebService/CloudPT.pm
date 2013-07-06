@@ -100,7 +100,6 @@ sub auth {
 		'verifier' => $args->{'verifier'},
 		
     }) or return;
-	print "body: " . $body ."\n";
 
     my $response = Net::OAuth->response('access token')->from_post_body($body);
     $self->access_token($response->token);
@@ -415,11 +414,9 @@ sub api {
 
     $self->code($code);
     if ($code != 200) {
-		print "code: " .$code ."\n";
         $self->error($body);
         return;
     } else {
-		print "code: " . $code ."\n";
         $self->error(undef);
     }
 
@@ -454,7 +451,6 @@ sub api_lwp {
             );
         };
 		if (($content !~/^path\=/) and ($content !~/^rev=/) and ($content !~/^from_/) and ($content !~/^to_email/) and ($content !~/^shareid=/)){
-			print "SEEK\n";
 	        $assert->(defined(my $cur_pos = tell($content)), 'tell');
    	    	$assert->(seek($content, 0, SEEK_END),           'seek');
 	        $assert->(defined(my $end_pos = tell($content)), 'tell');

@@ -608,10 +608,11 @@ WebService::CloudPT - Perl interface to CloudPT API
 
     # get access token
     if (!$access_token or !$access_secret) {
-        my $url = $cloudpt->login or die $cloudpt->error;
+        my $url = $cloudpt->login($url_callback) or die $cloudpt->error;
         warn "Please Access URL and press Enter: $url";
-        <STDIN>;
-        $cloudpt->auth or die $cloudt->error;
+        my $verifier = <STDIN>;
+		chomp $verifier;
+        $cloudpt->auth({'verifier' = $verifier ]) or die $cloudt->error;
         warn "access_token: " . $cloudpt->access_token;
         warn "access_secret: " . $cloudpt->access_secret;
     } else {
@@ -648,6 +649,7 @@ WebService::CloudPT is Perl interface to CloudPT API L<https://cloudpt.pt>
 - Streaming IO (Low Memory)
 
 - Default URI Escape (The specified path is utf8 decoded string)
+
 
 =head1 API
 
@@ -836,7 +838,7 @@ enable HTTP_PROXY, NO_PROXY
 
 =head1 AUTHOR
 
-Bruno Martins , based on WebService::Dropbox by Shinichiro Aska
+Bruno Martins C<< <bruno-martins at telecom.pt> >>, based on WebService::Dropbox by Shinichiro Aska
 
 =head1 SEE ALSO
 

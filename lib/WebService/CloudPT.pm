@@ -606,13 +606,15 @@ WebService::CloudPT - Perl interface to CloudPT API
         secret => '...' # App Secret
     });
 
+    my $url_callback = '...'; # http://0:3000 for instance.
+
     # get access token
     if (!$access_token or !$access_secret) {
         my $url = $cloudpt->login($url_callback) or die $cloudpt->error;
-        warn "Please Access URL and press Enter: $url";
+        warn "Please Access $url and copy&paste its oauth_verifier parameter to here. <Enter>";
         my $verifier = <STDIN>;
 		chomp $verifier;
-        $cloudpt->auth({'verifier' = $verifier ]) or die $cloudt->error;
+        $cloudpt->auth({'verifier' => $verifier }) or die $cloudt->error;
         warn "access_token: " . $cloudpt->access_token;
         warn "access_secret: " . $cloudpt->access_secret;
     } else {
